@@ -351,6 +351,7 @@ function estraiLinkDaHtml_(html, baseUrl) {
 function pulisciTestoAnchor_(testoHtml) {
   var s = String(testoHtml || "");
   s = s.replace(/<[^>]+>/g, " ");
+  s = decodeHtmlEntities_(s);
   s = s.replace(/\s+/g, " ").trim();
   return s;
 }
@@ -366,21 +367,8 @@ function estraiStartupDaLink_(links, dominioAcceleratore) {
     var chiave = normalizeWebsite(url);
     if (!chiave) continue;
 
-    if (testo) {
-      var t = String(testo).trim().toLowerCase();
-      if (
-        t === "apply" ||
-        t === "more info" ||
-        t === "learn more" ||
-        t === "read more" ||
-        t === "contact" ||
-        t === "privacy policy" ||
-        t === "terms" ||
-        t === "cookie policy"
-      ) {
-        continue;
-      }
-    }
+    var testoPulito = pulisciTestoAnchor_(testo);
+    if (eTestoCta_(testoPulito)) continue;
 
     var dominio = dominioDaUrl_(chiave);
     if (!dominio) continue;
@@ -394,9 +382,10 @@ function estraiStartupDaLink_(links, dominioAcceleratore) {
     if (!chiaveDominio || visti.has(chiaveDominio)) continue;
     visti.add(chiaveDominio);
 
+    var nome = normalizzaNomeStartup_(testoPulito, dominio);
     out.push({
       website: urlDominio,
-      name: testo || dominio,
+      name: nome || nomeDaDominio_(dominio),
     });
   }
 
@@ -412,9 +401,110 @@ function eSocialOTracking_(url) {
 
 function eDominioNonStartup_(url) {
   // Blacklist per evitare di inserire link palesemente non-startup.
-  return /\/\/([^\/]+\.)?(bing\.com|google\.com|goo\.gl|lnkd\.in|bit\.ly|t\.co|tinyurl\.com|share\.hsforms\.com|forms\.gle)\b/i.test(
-    url
+  return (
+    /\/\/([^\/]+\.)?(bing\.com|google\.com|rankings\.ft\.com|ft\.com|goo\.gl|lnkd\.in|bit\.ly|t\.co|tinyurl\.com|typeform\.com|hsforms\.com|share(-[a-z0-9]+)?\.hsforms\.com|forms\.gle|wa\.me|bsky\.app)\b/i.test(
+      url
+    ) ||
+    /\/\/([^\/]+\.)?kcl\.ac\.uk\b/i.test(url)
   );
+}
+
+function eTestoCta_(testoPulito) {
+  var t = String(testoPulito || "").trim().toLowerCase();
+  if (!t) return true;
+  return (
+    t === "apply" ||
+    t === "apply now" ||
+    t === "apply here" ||
+    t === "sign up" ||
+    t === "sign up here" ||
+    t === "signup" ||
+    t === "sign in" ||
+    t === "log in" ||
+    t === "join" ||
+    t === "join now" ||
+    t === "more info" ||
+    t === "learn more" ||
+    t === "read more" ||
+    t === "contact" ||
+    t === "donate" ||
+    t === "staff" ||
+    t === "academic calendar" ||
+    t === "privacy" ||
+    t === "privacy policy" ||
+    t === "terms" ||
+    t === "terms of service" ||
+    t === "cookie policy" ||
+    t === "website" ||
+    t === "visit website"
+  );
+}
+
+function normalizzaNomeStartup_(testoPulito, dominio) {
+  var nome = String(testoPulito || "").trim();
+  if (!nome) return "";
+
+  // Se e' chiaramente il dominio, meglio derivare (name piu' pulito).
+  var d = String(dominio || "").toLowerCase();
+  if (d && nome.toLowerCase() === d) return "";
+
+  // Se e' tutto minuscolo (e non troppo lungo), title case.
+  if (/^[a-z0-9 .&'\\-]+$/.test(nome) && nome === nome.toLowerCase() && nome.length <= 50) {
+    return titleCaseSemplice_(nome);
+  }
+
+  return nome;
+}
+
+function nomeDaDominio_(dominio) {
+  var host = String(dominio || "").toLowerCase();
+  host = host.replace(/^www\\./, "");
+  var parti = host.split(".");
+  var base = host;
+  if (parti.length >= 2) base = parti[parti.length - 2];
+  // Evita basi troppo generiche.
+  if ((base === "co" || base === "com" || base === "org") && parti.length >= 3) {
+    base = parti[parti.length - 3];
+  }
+  return titleCaseSemplice_(base.replace(/[-_]+/g, " "));
+}
+
+function titleCaseSemplice_(s) {
+  var t = String(s || "").trim();
+  if (!t) return "";
+  return t
+    .split(/\\s+/)
+    .map(function (w) {
+      if (!w) return "";
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    })
+    .join(" ")
+    .trim();
+}
+
+function decodeHtmlEntities_(s) {
+  var t = String(s || "");
+  t = t
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">");
+
+  // Numeric entities
+  t = t.replace(/&#x([0-9a-fA-F]+);/g, function (_, hex) {
+    var code = parseInt(hex, 16);
+    if (!code || code < 32 || code > 126) return "";
+    return String.fromCharCode(code);
+  });
+  t = t.replace(/&#([0-9]+);/g, function (_, num) {
+    var code = parseInt(num, 10);
+    if (!code || code < 32 || code > 126) return "";
+    return String.fromCharCode(code);
+  });
+
+  return t;
 }
 
 function verificaSitoStartup_(website) {

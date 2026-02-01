@@ -3,7 +3,7 @@ function generaValuePropositionMancantiLLM_(opzioni) {
   var sleepMs = (opzioni && opzioni.sleepMs) || 250;
 
   var run = creaRun_("vp");
-  var cfg = validaSegretiLLM_();
+  var cfg = validateSecretsLLM_();
 
   var scheda = getScheda_("startups");
   var valori = leggiValori_(scheda);
