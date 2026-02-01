@@ -15,6 +15,8 @@ Predisporre il file sheet con i seguenti 2 fogli e le relative colonne:
     - accelerators : website, name, country
     - startups : website, name, country, accelerator, value_proposition
 
+
+
 ## Setup (Apps Script)
 1) Apri il Google Sheet -> Extensions -> Apps Script.
 2) Copia i file `.gs` di questo repo nel progetto Apps Script (1:1).
@@ -29,9 +31,11 @@ Predisporre il file sheet con i seguenti 2 fogli e le relative colonne:
 
 ## Uso (menu)
 Nel foglio trovi `Startup Scouting AI`:
-1) `Scouting accelerators`: aggiunge ~10 acceleratori per run in `accelerators`
-2) `Aggiorna startups dagli acceleratori`: trova startup (portfolio/alumni/batch) e inserisce nuove righe in `startups`
-3) `Genera value proposition mancanti`: compila `value_proposition` per le startup mancanti
+1) `Setup LLM API Key`: Pulsante che permette l'inserimento della api key senza dover aggiungerla nelle Script properties.
+------
+2) `Scouting accelerators`: aggiunge ~10 acceleratori per run in `accelerators`
+3) `Aggiorna startups dagli acceleratori`: trova startup (portfolio/alumni/batch) e inserisce nuove righe in `startups`
+4) `Genera value proposition mancanti`: compila `value_proposition` per le startup mancanti
 
 ## Scelte tecniche (come richiesto)
 - `website` primarykey con normalizzazione URL (niente duplicati).
