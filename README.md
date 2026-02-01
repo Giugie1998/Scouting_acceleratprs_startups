@@ -10,6 +10,11 @@ Prototipo per:
 ## Google Sheet
 - Link: https://docs.google.com/spreadsheets/d/1BuJTGiLtYHDWRh5ur6Tp4_cSQro8l4WvvVH6dC2pabI/edit?usp=sharing
 
+## Setup file sheet 
+Predisporre il file sheet con i seguenti 2 fogli e le relative colonne: 
+    - accelerators : website, name, country
+    - startups : website, name, country, accelerator, value_proposition
+
 ## Setup (Apps Script)
 1) Apri il Google Sheet -> Extensions -> Apps Script.
 2) Copia i file `.gs` di questo repo nel progetto Apps Script (1:1).
