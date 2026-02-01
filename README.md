@@ -1,1 +1,44 @@
-Start here
+# AI Scouting (Google Sheets + Apps Script)
+
+Url utilizzato per l'estrapolazione degli accelerators https://rankings.ft.com/incubator-accelerator-programmes-europe
+
+Prototipo per:
+- fare scouting di acceleratori in Europa
+- estrarre startup dai portfolio degli acceleratori
+- generare una value proposition per le startup via LLM
+
+## Google Sheet
+- Link: https://docs.google.com/spreadsheets/d/1BuJTGiLtYHDWRh5ur6Tp4_cSQro8l4WvvVH6dC2pabI/edit?usp=sharing
+
+## Setup (Apps Script)
+1) Apri il Google Sheet -> Extensions -> Apps Script.
+2) Copia i file `.gs` di questo repo nel progetto Apps Script (1:1).
+3) Apps Script -> Project Settings -> Script properties:
+   - `LLM_API_KEY`: API key (NON nel codice / NON nel repo)
+   - `LLM_API_URL`: default `https://openrouter.ai/api/v1/chat/completions` 
+   - `LLM_MODEL`: default `openai/gpt-oss-20b:free`
+
+   - `ACCELERATORS_SOURCE_OFFSET`: `0` (inizializza batch)
+
+## Uso (menu)
+Nel foglio trovi `Startup Scouting AI`:
+1) `Scouting accelerators`: aggiunge ~10 acceleratori per run in `accelerators`
+2) `Aggiorna startups dagli acceleratori`: trova startup (portfolio/alumni/batch) e inserisce nuove righe in `startups`
+3) `Genera value proposition mancanti`: compila `value_proposition` per le startup mancanti
+
+## Scelte tecniche (come richiesto)
+- `website` primarykey con normalizzazione URL (niente duplicati).
+- Robustezza: 
+    - error handling "skip + log" (no blocco dell'intero processo).
+    - Check pre-inserimento startup: fetch del sito con timeout 10s + contenuto minimo (evita righe non processabili per value_proposition).
+- Filtri per evitare falsi positivi (social/shortener/search) nello scouting startup.
+- API_URL: openrouter piena libertà sulla selezione del modello LLM scelto. 
+
+## LLM (scelta modello)
+- Default: `openai/gpt-oss-20b:free`, dopo aver testato altri modelli (free), mi è risultato il più solido in termini di Velocità/Risultato.
+
+## Limiti noti
+- `country` startup non sempre deducibile dal portfolio: puo' restare vuoto (oppure derivato via formula dal country dell'acceleratore).
+
+## Info su clasp
+Non avendolo usato prima ho decido di non utilizzare clasp e di procedere con un semplice repository Github.
