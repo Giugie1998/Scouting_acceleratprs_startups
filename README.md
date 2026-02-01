@@ -14,11 +14,13 @@ Prototipo per:
 1) Apri il Google Sheet -> Extensions -> Apps Script.
 2) Copia i file `.gs` di questo repo nel progetto Apps Script (1:1).
 3) Apps Script -> Project Settings -> Script properties:
-   - `LLM_API_KEY`: API key (NON nel codice / NON nel repo)
+   - `LLM_API_KEY`: API key generabile su OpenRouter
    - `LLM_API_URL`: default `https://openrouter.ai/api/v1/chat/completions` 
    - `LLM_MODEL`: default `openai/gpt-oss-20b:free`
+   - Nota OpenRouter: per usare modelli `:free` potrebbe essere necessario abilitare la Data/Privacy policy sul tuo account (Settings -> Privacy).
 
    - `ACCELERATORS_SOURCE_OFFSET`: `0` (inizializza batch)
+   - (opzionale) `ACCELERATORS_SOURCE_URL`: default `https://rankings.ft.com/incubator-accelerator-programmes-europe`
 
 ## Uso (menu)
 Nel foglio trovi `Startup Scouting AI`:
